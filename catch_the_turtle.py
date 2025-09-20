@@ -1,104 +1,124 @@
 import turtle
-from random import randint
 from random import shuffle
+from random import randint
+
 
 # ekran oluşturma
 
 screen = turtle.Screen()
-screen.bgcolor("white")
-screen.title("Catch The Turtle")
 screen.tracer(0) # animasyonları kapatır
+def screen_config():
+    screen.bgcolor("#123524")
+    screen.title("Catch The Turtle")
+screen_config()
+game_over = False
+
+h = (screen.window_height() / 2)*0.9
+
+# Font oluşturma
+
+def style_maker(size):
+    style_ex = ("Arial",size,"normal")
+    return style_ex
+
+# Font 1
+
+style = style_maker(20)
+
+# kalem oluşturma
+
+def pen_maker():
+    pen_ex = turtle.Turtle()
+    pen_ex.color("white")
+    pen_ex.pensize(3)
+    pen_ex.penup()
+    pen_ex.hideturtle()
+    return pen_ex
+
+#kalem 1
+
+pen = pen_maker()
 
 # mesaj fonksiyonu
 
 def write_top_message(message): # sürekli bunları yapıcağımız için mesaj fonksiyonu
-    pen1.clear()
-    pen1.penup()
-    pen1.goto(0,380)
-    pen1.pendown()
-    pen1.write(message, font=style1, align="center")
-    pen1.hideturtle()
+    pen.clear()
+    pen.goto(0,h)
+    pen.write(message, font=style, align="center")
 
+# Oyuna Başlama Mesajı ve Geri Sayım
 
-# kalem 1
-
-pen1 = turtle.Turtle()
-pen1.pensize(3)
-pen1.speed(0)
-
-# sayaç
-
-starting_game = 6
-timer = 31
-style1 = ("Courier",30,"bold")
+starting_game_timer = 6
 
 def start_game():
-    global starting_game
-    starting_game -= 1
-    if starting_game > 0:
-        screen.reset()
-        write_top_message(f"Game is about to start | Get ready {starting_game}")
+    global starting_game_timer
+    starting_game_timer -= 1
+    if starting_game_timer > 0:
+        t.hideturtle()
+        write_top_message(f"Game is about to start | Get ready : {starting_game_timer}")
         screen.ontimer(start_game,1000)
     else:
-        countdown()
-        goturtle()
-def countdown():
-    global timer
-    timer -= 1
-    if timer > 0:
-        pen1.reset()
-        write_top_message(f"Countdown : {timer}")
-        screen.ontimer(countdown,1000)
+        t.showturtle()
+        go_turtle()
+        game()
+        t.onclick(click)  # bunu fonksiyonun dışında yazman lazım
+
+# Oyun esnasında ekranda gösterilicek yazı
+
+game_timer = 31
+
+def game():
+    global game_timer,game_over
+    game_timer -= 1
+    if game_timer > 0:
+        write_top_message(f"Catch The Turtle : {game_timer}")
+        screen.ontimer(game,1000)
     else:
-        finish_game()
-def finish_game():
-    global timer
-    if timer == 0:
-        write_top_message(f"Time Is Up :)")
-        screen.ontimer(finish_game, 1000)
-
-def goturtle():
-    global timer
-    if timer > 0:
-        turtlecatch()
-        pen2.onclick(click)
-        pen3.hideturtle()
+        game_over = True
+        t.hideturtle()
         screen.update()
-        screen.ontimer(goturtle,600)
+        finish_game()
 
+# Oyun bittiğinde gösterilicek yazı
 
-# kaplumbağa oluşturma
+def finish_game():
+    global game_timer
+    if game_timer == 0:
+        write_top_message("Game Over")
 
-coordinat_list = list(range(-350,360,30))
+# Kaplumbağa oluşturma
+
+t = turtle.Turtle()
+t.penup()
+t.shape("turtle")
+t.shapesize(1.6,1.6)
+t.color("green")
+
+# Kaplumbağayı rastgele yerlere götürme
+
+coordinat_list = list(range(-300,300,20))
 shuffle(coordinat_list)
 
-pen2 = turtle.Turtle()
-pen2.shape("turtle")
+def go_turtle():
+    if not game_over:
+        t.goto(coordinat_list[randint(0,len(coordinat_list)-1)],coordinat_list[randint(0,len(coordinat_list)-1)])
+        screen.update()
+        screen.ontimer(go_turtle,600)
 
+# Kaplumbağaya Basma Ve Bastıkça Puan Kazanma
 
-def turtlecatch():
-    pen2.fillcolor("green")
-    pen2.shapesize(2)
-    pen2.penup()
-    pen2.goto(coordinat_list[randint(0,len(coordinat_list)-1)],coordinat_list[randint(0,len(coordinat_list)-1)])
-
-# click oluşturma
-
-style2 = ("Courier",20,"bold")
-written = 0
-
-pen3 = turtle.Turtle()
+score = 0
+c_style = style_maker(15)
+c = pen_maker()
 
 def click(_x,_y):
-    global written,timer
-    if timer > 0:
-        written += 1
-        pen3.clear()
-        pen3.penup()
-        pen3.goto(-650,385)
-        pen3.pendown()
-        pen3.write(f"Your Score : {written}",font=style2,align="center")
+    global score,game_over
+    if not game_over:
+        score += 1
+    c.clear()
+    c.goto(-270, h)
+    c.write(f"Your Score : {score}", font=c_style, align="center")
 
-screen.update()
 start_game()
+screen.update()
 screen.mainloop()
