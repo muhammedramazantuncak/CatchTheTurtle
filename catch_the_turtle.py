@@ -7,12 +7,10 @@ from random import randint
 
 screen = turtle.Screen()
 screen.tracer(0) # animasyonları kapatır
-def screen_config():
-    screen.bgcolor("#123524")
-    screen.title("Catch The Turtle")
-screen_config()
-game_over = False
+screen.bgcolor("#123524")
+screen.title("Catch The Turtle")
 
+game_over = False
 h = (screen.window_height() / 2)*0.9
 
 # Font oluşturma
@@ -23,7 +21,7 @@ def style_maker(size):
 
 # Font 1
 
-style = style_maker(20)
+top_message_style = style_maker(20)
 
 # kalem oluşturma
 
@@ -44,7 +42,7 @@ pen = pen_maker()
 def write_top_message(message): # sürekli bunları yapıcağımız için mesaj fonksiyonu
     pen.clear()
     pen.goto(0,h)
-    pen.write(message, font=style, align="center")
+    pen.write(message, font=top_message_style, align="center")
 
 # Oyuna Başlama Mesajı ve Geri Sayım
 
